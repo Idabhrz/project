@@ -13,16 +13,18 @@ class Program
             Console.WriteLine("0 - Exit");
             string choice = Console.ReadLine();
 
+            var factory = new FunctionalityFactory();
+
             switch (choice)
             {
                 case "1":
-                    CheckPrimeNumber();
+                    factory.CreateFunctionality("PrimeNumber").Execute();
                     break;
                 case "2":
-                    CheckMirrorNumber();
+                    factory.CreateFunctionality("MirrorNumber").Execute();
                     break;
                 case "3":
-                    DecisionTree();
+                    factory.CreateFunctionality("DecisionTree").Execute();
                     break;
                 case "0":
                     return;
@@ -32,8 +34,16 @@ class Program
             }
         }
     }
+}
 
-    static void CheckPrimeNumber()
+public interface IFunctionality
+{
+    void Execute();
+}
+
+public class PrimeNumberFunctionality : IFunctionality
+{
+    public void Execute()
     {
         Console.Write("Enter a number: ");
         if (int.TryParse(Console.ReadLine(), out int number))
@@ -47,7 +57,7 @@ class Program
         }
     }
 
-    static bool IsPrime(int number)
+    private bool IsPrime(int number)
     {
         if (number <= 1) return false;
         for (int i = 2; i <= Math.Sqrt(number); i++)
@@ -56,8 +66,11 @@ class Program
         }
         return true;
     }
+}
 
-    static void CheckMirrorNumber()
+public class MirrorNumberFunctionality : IFunctionality
+{
+    public void Execute()
     {
         Console.Write("Enter a number: ");
         if (int.TryParse(Console.ReadLine(), out int number))
@@ -71,7 +84,7 @@ class Program
         }
     }
 
-    static bool IsMirrorNumber(int number)
+    private bool IsMirrorNumber(int number)
     {
         int original = number;
         int reversed = 0;
@@ -85,8 +98,11 @@ class Program
 
         return original == reversed;
     }
+}
 
-    static void DecisionTree()
+public class DecisionTreeFunctionality : IFunctionality
+{
+    public void Execute()
     {
         Console.WriteLine("Answer the following questions with 'yes' or 'no':");
 
@@ -98,7 +114,6 @@ class Program
 
         Console.Write("Are you going outside? ");
         string answer3 = Console.ReadLine().ToLower().Trim();
-
 
         if (answer1 == "yes")
         {
@@ -144,6 +159,24 @@ class Program
         else
         {
             Console.WriteLine("Invalid input for rain question.");
+        }
+    }
+}
+
+public class FunctionalityFactory
+{
+    public IFunctionality CreateFunctionality(string type)
+    {
+        switch (type)
+        {
+            case "PrimeNumber":
+                return new PrimeNumberFunctionality();
+            case "MirrorNumber":
+                return new MirrorNumberFunctionality();
+            case "DecisionTree":
+                return new DecisionTreeFunctionality();
+            default:
+                throw new ArgumentException("Invalid functionality type");
         }
     }
 }
